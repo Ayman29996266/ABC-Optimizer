@@ -1,18 +1,6 @@
 import numpy as np
 
 
-def color_list(num_colors):
-    colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231',
-              '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe',
-              '#008080', '#e6beff', '#9a6324', '#800000', '#aaffc3',
-              '#808000', '#ffd8b1', '#000075', '#808080', '#000000']
-    while num_colors > len(colors):
-        n_color = '#'
-        for i in [np.random.choice(['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f']) for _ in range(6)]:
-            n_color += i
-        colors.append(n_color)
-    return colors[:num_colors]
-
 
 def generate_dataset(min_val=-100, max_val=100, center=[0,0,0], dim=3, max_trails=500,
                      num_centroids=6, centroids_rad=30, centroids_min_dist=20,
