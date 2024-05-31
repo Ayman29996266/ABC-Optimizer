@@ -1,7 +1,24 @@
-import matplotlib.pyplot as plt
+from objective_function import SumOfSquaredErrors
+from data_generator import generate_dataset
 from matplotlib.gridspec import GridSpec
-from classes import *
+import matplotlib.pyplot as plt
+from optimizer import *
 import time
+
+
+
+def color_list(num_colors):
+    colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231',
+              '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe',
+              '#008080', '#e6beff', '#9a6324', '#800000', '#aaffc3',
+              '#808000', '#ffd8b1', '#000075', '#808080', '#000000']
+    while num_colors > len(colors):
+        n_color = '#'
+        for i in [np.random.choice(['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f']) for _ in range(6)]:
+            n_color += i
+        colors.append(n_color)
+    return colors[:num_colors]
+
 
 
 def ABCO():
@@ -19,7 +36,6 @@ def ABCO():
                                cluster_var_size=12, cluster_var_rad=12, cluster_dots_min_dist=1)
 
     colors = color_list(number_of_clusters)
-    simulation_budget = 70
 
 
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Clustering function optimization:
@@ -44,19 +60,6 @@ def ABCO():
         sse_clustering.append([sorted(distances).index(element) for element in distances])
     
     print('Time: ', np.ceil((time.time() - start_time) * 1000), 'ms\n')
-
-
-    # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Simulating:
-
-
-    simulation = Simulator(data=dataset,
-                           sse=sse_clustering,
-                           budget=simulation_budget,
-                           demo=20)
-
-    sim_result = [[simulation.sse, simulation.non, simulation.demo],
-                  ['ABC (SSE)', 'None', 'Demographic'],
-                  ['#EBA937', 'gray', 'b']]
 
 
     # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Plotting:
@@ -100,17 +103,18 @@ def ABCO():
                     s=15, edgecolor='k',
                     alpha=1, color=colors[cluster[0]])
     
-    '''
-    for centroid in sse_centroids:
-        ax2.scatter(sse_centroids[centroid][0],
-                    sse_centroids[centroid][1],
-                    sse_centroids[centroid][2],
-                    color=colors[int(centroid)],
-                    edgecolors='k', marker='o',lw=2, s=50)
-    '''                                                     # uncomment this to plot the centroids
+
+
+    # Uncoment the following to plot the centroids
     
+    # for centroid in sse_centroids:
+    #     ax2.scatter(sse_centroids[centroid][0],
+    #                 sse_centroids[centroid][1],
+    #                 sse_centroids[centroid][2],
+    #                 color=colors[int(centroid)],
+    #                 edgecolors='k', marker='o',lw=2, s=50)
 
-
+    
     # ________________sse_fitness_track:
 
 
@@ -120,25 +124,6 @@ def ABCO():
     ax3.set_ylabel('Fitness')
     ax3.plot(range(number_of_iterations),
              sse_optimization['optimality_tracking'])
-
-
-    # ________________techniques_comparison:
-
-
-    ax4 = fig.add_subplot(gs[8])
-    ax4.set_title('Simulation results')
-    ax4.set_xlabel('Targeting technique')
-    ax4.set_ylabel('Click through rate')
-    ax4.bar(sim_result[1], sim_result[0], color=sim_result[2])
-    for _ in range(len(sim_result[1])):
-        ax4.text(_, 40, f"{sim_result[0][_]:.3f}"[:4],
-                 ha='center', va='bottom', fontsize=14)
-
-        ax4.text(1, 40, f"{sim_result[0][1]:.3f}"[:4],
-                 ha='center', va='bottom', fontsize=14)
-
-        ax4.text(2, 40, f"{sim_result[0][2]:.3f}"[:4],
-                 ha='center', va='bottom', fontsize=14)
 
 
     plt.show()
